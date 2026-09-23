@@ -162,25 +162,6 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
     );
   }
 
-  if (leadIn > 0) {
-    return (
-      <Shell>
-        <div className={`rounded-2xl ${teamColor} px-4 py-2 text-center font-bold text-panel`}>
-          {teamLabel}
-        </div>
-        <p className="mt-8 text-center text-xs font-semibold tracking-[0.3em] text-muted-foreground">
-          HAZIR OL
-        </p>
-        <p className="mt-2 text-center text-8xl font-extrabold tabular-nums text-foreground">
-          {leadIn}
-        </p>
-        <p className="mt-8 text-center text-sm font-semibold text-muted-foreground">
-          Soru birazdan ekranına gelecek.
-        </p>
-      </Shell>
-    );
-  }
-
   return (
     <Shell>
       <div className="flex items-center justify-between gap-3">
