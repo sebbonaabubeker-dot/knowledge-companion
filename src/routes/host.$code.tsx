@@ -47,14 +47,14 @@ function HostScreen() {
   const resolved = data?.resolved ?? false;
   const qIndex = q?.index ?? 0;
 
-  // Soru cevaplandığında (doğru cevap ya da herkes cevapladı) sıradaki soruya geç
+  // Doğru cevap verildiğinde sıradaki soruya geç
   useEffect(() => {
-    if (status !== "PLAYING" || leadIn > 0 || !resolved) return undefined;
+    if (status !== "PLAYING" || !resolved) return undefined;
     const id = setTimeout(() => {
       void control({ data: { code, action: "next" } }).then(() => refetch());
     }, 2200);
     return () => clearTimeout(id);
-  }, [status, resolved, leadIn, qIndex, code, control, refetch]);
+  }, [status, resolved, qIndex, code, control, refetch]);
 
   useEffect(() => {
     if (!data) return;
