@@ -181,10 +181,8 @@ export const getRoomState = createServerFn({ method: "POST" })
         .eq("room_id", room.id)
         .eq("question_id", currentId);
       answeredIds = (answers ?? []).map((a) => a.player_id);
-      const playerCount = (players ?? []).length;
-      resolved =
-        (answers ?? []).some((a) => a.is_correct) ||
-        (playerCount > 0 && answeredIds.length >= playerCount);
+      // Soru yalnızca doğru cevap verildiğinde çözülür; yanlış cevap veren denemeye devam eder.
+      resolved = (answers ?? []).some((a) => a.is_correct);
       const mine = (answers ?? []).find((a) => a.player_id === data.playerId);
       if (mine) me = { answer: mine.answer, isCorrect: mine.is_correct };
     }
@@ -237,26 +235,32 @@ export const submitAnswer = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!q) throw new Error("Soru bulunamadı");
 
-    if (room.question_started_at && new Date(room.question_started_at).getTime() > Date.now())
-      throw new Error("Soru henüz başlamadı");
-
     const { data: existing } = await supabase
       .from("answers")
-      .select("player_id, is_correct")
+      .select("id, player_id, is_correct")
       .eq("room_id", room.id)
       .eq("question_id", currentId);
-    if ((existing ?? []).some((a) => a.player_id === player.id))
-      throw new Error("Bu soruya zaten cevap verdiniz");
+    if ((existing ?? []).some((a) => a.is_correct))
+      throw new Error("Bu soru çözüldü, sıradaki soru geliyor");
 
     const isCorrect = q.correct_answer.toUpperCase() === data.answer;
-    const { error: insErr } = await supabase.from("answers").insert({
-      room_id: room.id,
-      player_id: player.id,
-      question_id: currentId,
-      answer: data.answer,
-      is_correct: isCorrect,
-    });
-    if (insErr) throw new Error("Cevap kaydedilemedi");
+    const mine = (existing ?? []).find((a) => a.player_id === player.id);
+    if (mine) {
+      const { error: updErr } = await supabase
+        .from("answers")
+        .update({ answer: data.answer, is_correct: isCorrect })
+        .eq("id", mine.id);
+      if (updErr) throw new Error("Cevap kaydedilemedi");
+    } else {
+      const { error: insErr } = await supabase.from("answers").insert({
+        room_id: room.id,
+        player_id: player.id,
+        question_id: currentId,
+        answer: data.answer,
+        is_correct: isCorrect,
+      });
+      if (insErr) throw new Error("Cevap kaydedilemedi");
+    }
 
     const someoneAlreadyCorrect = (existing ?? []).some((a) => a.is_correct);
     if (isCorrect && !someoneAlreadyCorrect) {
@@ -299,7 +303,7 @@ export const controlRoom = createServerFn({ method: "POST" })
           rope_position: 0,
           winner: null,
           reveal: false,
-          question_started_at: new Date(Date.now() + 3200).toISOString(),
+          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       await supabase.from("answers").delete().eq("room_id", room.id);
@@ -320,7 +324,7 @@ export const controlRoom = createServerFn({ method: "POST" })
           current_question: nextIndex,
           reveal: false,
           status: "PLAYING",
-          question_started_at: new Date(Date.now() + 1500).toISOString(),
+          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       return { ok: true };

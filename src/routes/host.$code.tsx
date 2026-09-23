@@ -5,7 +5,7 @@ import QRCode from "react-qr-code";
 import tugOfWarGround from "@/assets/tug-of-war-ground.png";
 import tugOfWarPlayers from "@/assets/tug-of-war-players.png";
 import { TugOfWarArena } from "@/components/game/TugOfWarArena";
-import { useGameState, useLeadIn } from "@/hooks/useGameState";
+import { useGameState } from "@/hooks/useGameState";
 import { controlRoom, createRoom } from "@/lib/game.functions";
 
 export const Route = createFileRoute("/host/$code")({
@@ -43,19 +43,18 @@ function HostScreen() {
   const prevPos = useRef(0);
 
   const q = data?.question ?? null;
-  const leadIn = useLeadIn(q?.startedAt);
   const status = data?.status;
   const resolved = data?.resolved ?? false;
   const qIndex = q?.index ?? 0;
 
-  // Soru cevaplandığında (doğru cevap ya da herkes cevapladı) sıradaki soruya geç
+  // Doğru cevap verildiğinde sıradaki soruya geç
   useEffect(() => {
-    if (status !== "PLAYING" || leadIn > 0 || !resolved) return undefined;
+    if (status !== "PLAYING" || !resolved) return undefined;
     const id = setTimeout(() => {
       void control({ data: { code, action: "next" } }).then(() => refetch());
     }, 2200);
     return () => clearTimeout(id);
-  }, [status, resolved, leadIn, qIndex, code, control, refetch]);
+  }, [status, resolved, qIndex, code, control, refetch]);
 
   useEffect(() => {
     if (!data) return;
@@ -159,21 +158,8 @@ function HostScreen() {
                 <TugOfWarArena ropePosition={data.ropePosition} pulse={pulse} />
               </div>
               <div className="mt-6 text-center">
-                {leadIn > 0 ? (
-                  <>
-                    <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground">
-                      HAZIR OL
-                    </p>
-                    <p className="mt-2 text-[7rem] font-extrabold leading-none tabular-nums text-foreground">
-                      {leadIn}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    {data.status === "PAUSED" && (
-                      <p className="mt-3 text-3xl font-extrabold text-foreground">DURAKLATILDI</p>
-                    )}
-                  </>
+                {data.status === "PAUSED" && (
+                  <p className="mt-3 text-3xl font-extrabold text-foreground">DURAKLATILDI</p>
                 )}
               </div>
             </section>

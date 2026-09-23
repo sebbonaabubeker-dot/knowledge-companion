@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { useGameState, useLeadIn } from "@/hooks/useGameState";
+import { useGameState } from "@/hooks/useGameState";
 import { heartbeat, joinRoom, submitAnswer } from "@/lib/game.functions";
 
 export const Route = createFileRoute("/play/$code")({
@@ -111,7 +111,6 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
   }, [ping, playerId]);
 
   const q = data?.question ?? null;
-  const leadIn = useLeadIn(q?.startedAt);
   const me = data?.players.find((p) => p.id === playerId);
 
   if (isError)
@@ -163,25 +162,6 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
     );
   }
 
-  if (leadIn > 0) {
-    return (
-      <Shell>
-        <div className={`rounded-2xl ${teamColor} px-4 py-2 text-center font-bold text-panel`}>
-          {teamLabel}
-        </div>
-        <p className="mt-8 text-center text-xs font-semibold tracking-[0.3em] text-muted-foreground">
-          HAZIR OL
-        </p>
-        <p className="mt-2 text-center text-8xl font-extrabold tabular-nums text-foreground">
-          {leadIn}
-        </p>
-        <p className="mt-8 text-center text-sm font-semibold text-muted-foreground">
-          Soru birazdan ekranına gelecek.
-        </p>
-      </Shell>
-    );
-  }
-
   return (
     <Shell>
       <div className="flex items-center justify-between gap-3">
@@ -206,7 +186,9 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
               return (
                 <button
                   key={letter}
-                  disabled={!!data.me || data.status !== "PLAYING" || !!sending}
+                  disabled={
+                    data.resolved || data.me?.isCorrect === true || data.status !== "PLAYING" || !!sending
+                  }
                   onClick={async () => {
                     setSending(letter);
                     setError(null);
@@ -234,10 +216,14 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
 
           {data.me && (
             <div className="mt-5 text-center">
-              <p className="text-sm font-semibold text-muted-foreground">Cevabınız gönderildi</p>
               <p className="mt-1 text-2xl font-extrabold text-foreground">
-                {data.me.isCorrect ? "DOĞRU! 🎉" : "YANLIŞ"}
+                {data.me.isCorrect ? "DOĞRU! 🎉" : "YANLIŞ — tekrar dene"}
               </p>
+              {!data.me.isCorrect && !data.resolved && (
+                <p className="mt-1 text-sm font-semibold text-muted-foreground">
+                  Doğru cevabı bulana kadar deneyebilirsin.
+                </p>
+              )}
             </div>
           )}
           {error && (
