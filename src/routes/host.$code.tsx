@@ -43,7 +43,6 @@ function HostScreen() {
   const prevPos = useRef(0);
 
   const q = data?.question ?? null;
-  const leadIn = useLeadIn(q?.startedAt);
   const status = data?.status;
   const resolved = data?.resolved ?? false;
   const qIndex = q?.index ?? 0;
