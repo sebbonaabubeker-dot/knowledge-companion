@@ -5,7 +5,7 @@ import QRCode from "react-qr-code";
 import tugOfWarGround from "@/assets/tug-of-war-ground.png";
 import tugOfWarPlayers from "@/assets/tug-of-war-players.png";
 import { TugOfWarArena } from "@/components/game/TugOfWarArena";
-import { useGameState, useLeadIn } from "@/hooks/useGameState";
+import { useGameState } from "@/hooks/useGameState";
 import { controlRoom, createRoom } from "@/lib/game.functions";
 
 export const Route = createFileRoute("/host/$code")({
