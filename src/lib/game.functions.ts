@@ -181,10 +181,8 @@ export const getRoomState = createServerFn({ method: "POST" })
         .eq("room_id", room.id)
         .eq("question_id", currentId);
       answeredIds = (answers ?? []).map((a) => a.player_id);
-      const playerCount = (players ?? []).length;
-      resolved =
-        (answers ?? []).some((a) => a.is_correct) ||
-        (playerCount > 0 && answeredIds.length >= playerCount);
+      // Soru yalnızca doğru cevap verildiğinde çözülür; yanlış cevap veren denemeye devam eder.
+      resolved = (answers ?? []).some((a) => a.is_correct);
       const mine = (answers ?? []).find((a) => a.player_id === data.playerId);
       if (mine) me = { answer: mine.answer, isCorrect: mine.is_correct };
     }
