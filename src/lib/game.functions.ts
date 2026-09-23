@@ -324,7 +324,7 @@ export const controlRoom = createServerFn({ method: "POST" })
           current_question: nextIndex,
           reveal: false,
           status: "PLAYING",
-          question_started_at: new Date(Date.now() + 1500).toISOString(),
+          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       return { ok: true };
