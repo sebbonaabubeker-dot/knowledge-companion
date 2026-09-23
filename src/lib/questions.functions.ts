@@ -10,7 +10,6 @@ export type QuestionRow = {
   correct_answer: string;
   category: string;
   difficulty: string;
-  time_limit: number;
 };
 
 export type QuestionSetRow = {
@@ -115,7 +114,7 @@ export const listQuestions = createServerFn({ method: "POST" })
     let query = supabase
       .from("questions")
       .select(
-        "id, question, option_a, option_b, option_c, option_d, correct_answer, category, difficulty, time_limit",
+        "id, question, option_a, option_b, option_c, option_d, correct_answer, category, difficulty",
       )
       .order("created_at", { ascending: true });
     if (data.setId) query = query.eq("set_id", data.setId);
@@ -132,7 +131,6 @@ type QuestionInput = {
   option_d: string;
   correct_answer: string;
   category: string;
-  time_limit: number;
 };
 
 function clean(data: QuestionInput): QuestionInput {
@@ -144,7 +142,6 @@ function clean(data: QuestionInput): QuestionInput {
     option_d: String(data.option_d || "").trim().slice(0, 200),
     correct_answer: String(data.correct_answer || "A").toUpperCase().slice(0, 1),
     category: String(data.category || "Genel Kültür").trim().slice(0, 60),
-    time_limit: Math.max(5, Math.min(120, Number(data.time_limit) || 20)),
   };
 }
 

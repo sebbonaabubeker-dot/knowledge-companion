@@ -6,7 +6,7 @@ import tugOfWarGround from "@/assets/tug-of-war-ground.png";
 import tugOfWarPlayers from "@/assets/tug-of-war-players.png";
 import { TugOfWarArena } from "@/components/game/TugOfWarArena";
 import { useGameState } from "@/hooks/useGameState";
-import { controlRoom, createRoom } from "@/lib/game.functions";
+import { controlRoom } from "@/lib/game.functions";
 
 export const Route = createFileRoute("/host/$code")({
   head: () => ({
@@ -37,7 +37,6 @@ function HostScreen() {
   const navigate = useNavigate();
   const { data, isError, refetch } = useGameState(code);
   const control = useServerFn(controlRoom);
-  const create = useServerFn(createRoom);
   const [pulse, setPulse] = useState<1 | 2 | null>(null);
   const [lobbyOpen, setLobbyOpen] = useState(false);
   const prevPos = useRef(0);
@@ -126,8 +125,8 @@ function HostScreen() {
               <h1 className="mt-2 text-5xl font-extrabold tracking-[0.2em] text-foreground">
                 {code}
               </h1>
-              <div className="mt-8 rounded-3xl border-4 border-foreground p-5">
-                <QRCode value={joinUrl} size={220} bgColor="transparent" fgColor="#111827" />
+              <div className="mt-8 rounded-3xl border-4 border-foreground p-5 text-foreground">
+                <QRCode value={joinUrl} size={220} bgColor="transparent" fgColor="currentColor" />
               </div>
               <p className="mt-6 text-base font-bold tracking-[0.2em] text-foreground sm:text-lg">
                 TELEFONUNUZLA QR KODU OKUTUN
@@ -166,7 +165,6 @@ function HostScreen() {
           )}
         </div>
 
-        {/* Yönetici paneli */}
         <div className="mt-3 grid gap-3 rounded-[var(--radius)] bg-panel px-4 py-3 shadow-[var(--shadow-panel)] sm:grid-cols-[1fr_auto] sm:items-center">
           <div className="flex flex-wrap gap-2 text-xs font-semibold text-foreground">
             <StatusChip label="TAKIM 1" player={team1} />

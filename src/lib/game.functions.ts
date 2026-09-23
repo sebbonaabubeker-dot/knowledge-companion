@@ -13,7 +13,6 @@ export type PublicQuestion = {
   options: { A: string; B: string; C: string; D: string };
   category: string;
   difficulty: string;
-  startedAt: string | null;
 };
 
 export type PublicPlayer = {
@@ -172,7 +171,6 @@ export const getRoomState = createServerFn({ method: "POST" })
           options: { A: q.option_a, B: q.option_b, C: q.option_c, D: q.option_d },
           category: q.category,
           difficulty: q.difficulty,
-          startedAt: room.question_started_at,
         };
       }
       const { data: answers } = await supabase
@@ -271,14 +269,11 @@ export const submitAnswer = createServerFn({ method: "POST" })
         .from("rooms")
         .update({
           rope_position: next,
-          reveal: true,
           ...(finished
             ? { status: "FINISHED", winner: next <= -WIN_LIMIT ? "TEAM1" : "TEAM2" }
             : {}),
         })
         .eq("id", room.id);
-    } else {
-      await supabase.from("rooms").update({ reveal: true }).eq("id", room.id);
     }
 
     return { isCorrect };
@@ -302,8 +297,6 @@ export const controlRoom = createServerFn({ method: "POST" })
           current_question: 0,
           rope_position: 0,
           winner: null,
-          reveal: false,
-          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       await supabase.from("answers").delete().eq("room_id", room.id);
@@ -322,9 +315,7 @@ export const controlRoom = createServerFn({ method: "POST" })
         .from("rooms")
         .update({
           current_question: nextIndex,
-          reveal: false,
           status: "PLAYING",
-          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       return { ok: true };
@@ -336,10 +327,7 @@ export const controlRoom = createServerFn({ method: "POST" })
     }
 
     if (data.action === "resume") {
-      await supabase
-        .from("rooms")
-        .update({ status: "PLAYING", question_started_at: new Date().toISOString() })
-        .eq("id", room.id);
+      await supabase.from("rooms").update({ status: "PLAYING" }).eq("id", room.id);
       return { ok: true };
     }
 
@@ -352,8 +340,6 @@ export const controlRoom = createServerFn({ method: "POST" })
           current_question: 0,
           rope_position: 0,
           winner: null,
-          reveal: false,
-          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       return { ok: true };

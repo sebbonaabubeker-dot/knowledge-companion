@@ -1,7 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { createRoom } from "@/lib/game.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,6 +15,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "QR kod ile katıl, doğru cevapla halatı kendi takımına çek.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Home,
@@ -25,8 +25,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
-  const error: string | null = null;
-
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-5 py-12">
@@ -70,8 +68,6 @@ function Home() {
             </button>
           </div>
         </div>
-
-        {error && <p className="mt-4 text-sm font-semibold text-destructive">{error}</p>}
       </div>
     </main>
   );
