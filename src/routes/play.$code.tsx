@@ -11,6 +11,8 @@ export const Route = createFileRoute("/play/$code")({
       { name: "description", content: "Takımına katıl, soruları cevapla ve halatı kendine çek." },
       { property: "og:title", content: "Yarışmaya Katıl — Halat Yarışı" },
       { property: "og:description", content: "Telefonundan cevapla, halatı takımına çek." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: PlayerScreen,

@@ -39,7 +39,6 @@ const empty = {
   option_d: "",
   correct_answer: "A",
   category: "Genel Kültür",
-  time_limit: 20,
 };
 
 function QuestionsPage() {
@@ -159,7 +158,7 @@ function QuestionsPage() {
                 </Field>
               ))}
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Doğru cevap">
                 <div className="flex gap-2">
                   {LETTERS.map((l) => (
@@ -181,16 +180,6 @@ function QuestionsPage() {
                 <input
                   value={form.category}
                   onChange={(e) => set("category", e.target.value)}
-                  className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-base font-semibold text-foreground outline-none focus:border-team1"
-                />
-              </Field>
-              <Field label="Süre (saniye)">
-                <input
-                  type="number"
-                  min={5}
-                  max={120}
-                  value={form.time_limit}
-                  onChange={(e) => set("time_limit", Number(e.target.value))}
                   className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-base font-semibold text-foreground outline-none focus:border-team1"
                 />
               </Field>
@@ -230,7 +219,7 @@ function QuestionsPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold tracking-[0.25em] text-muted-foreground">
-                    {q.category.toUpperCase()} • {q.time_limit} SN
+                    {q.category.toUpperCase()}
                   </p>
                   <h3 className="mt-1 text-lg font-extrabold text-foreground">{q.question}</h3>
                 </div>
@@ -246,7 +235,6 @@ function QuestionsPage() {
                         option_d: q.option_d,
                         correct_answer: q.correct_answer.toUpperCase(),
                         category: q.category,
-                        time_limit: q.time_limit,
                       });
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
