@@ -303,7 +303,7 @@ export const controlRoom = createServerFn({ method: "POST" })
           rope_position: 0,
           winner: null,
           reveal: false,
-          question_started_at: new Date(Date.now() + 3200).toISOString(),
+          question_started_at: new Date().toISOString(),
         })
         .eq("id", room.id);
       await supabase.from("answers").delete().eq("room_id", room.id);
