@@ -216,10 +216,14 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
 
           {data.me && (
             <div className="mt-5 text-center">
-              <p className="text-sm font-semibold text-muted-foreground">Cevabınız gönderildi</p>
               <p className="mt-1 text-2xl font-extrabold text-foreground">
-                {data.me.isCorrect ? "DOĞRU! 🎉" : "YANLIŞ"}
+                {data.me.isCorrect ? "DOĞRU! 🎉" : "YANLIŞ — tekrar dene"}
               </p>
+              {!data.me.isCorrect && !data.resolved && (
+                <p className="mt-1 text-sm font-semibold text-muted-foreground">
+                  Doğru cevabı bulana kadar deneyebilirsin.
+                </p>
+              )}
             </div>
           )}
           {error && (
