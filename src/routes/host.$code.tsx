@@ -158,21 +158,8 @@ function HostScreen() {
                 <TugOfWarArena ropePosition={data.ropePosition} pulse={pulse} />
               </div>
               <div className="mt-6 text-center">
-                {leadIn > 0 ? (
-                  <>
-                    <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground">
-                      HAZIR OL
-                    </p>
-                    <p className="mt-2 text-[7rem] font-extrabold leading-none tabular-nums text-foreground">
-                      {leadIn}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    {data.status === "PAUSED" && (
-                      <p className="mt-3 text-3xl font-extrabold text-foreground">DURAKLATILDI</p>
-                    )}
-                  </>
+                {data.status === "PAUSED" && (
+                  <p className="mt-3 text-3xl font-extrabold text-foreground">DURAKLATILDI</p>
                 )}
               </div>
             </section>
