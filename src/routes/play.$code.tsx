@@ -186,7 +186,9 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
               return (
                 <button
                   key={letter}
-                  disabled={!!data.me || data.status !== "PLAYING" || !!sending}
+                  disabled={
+                    data.resolved || data.me?.isCorrect === true || data.status !== "PLAYING" || !!sending
+                  }
                   onClick={async () => {
                     setSending(letter);
                     setError(null);
