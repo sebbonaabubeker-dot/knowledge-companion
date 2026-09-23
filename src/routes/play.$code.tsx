@@ -111,7 +111,6 @@ function GameView({ code, playerId }: { code: string; playerId: string }) {
   }, [ping, playerId]);
 
   const q = data?.question ?? null;
-  const leadIn = useLeadIn(q?.startedAt);
   const me = data?.players.find((p) => p.id === playerId);
 
   if (isError)
